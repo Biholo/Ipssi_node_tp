@@ -50,19 +50,49 @@
             </form>
 
             <h2>Connexion</h2>
-                <form id="loginForm">
-                    <div class="form-group mb-3">
-                        <label for="loginEmail">Email :</label>
-                        <input type="email" class="form-control" id="loginEmail" required>
-                    </div>
+            <form id="loginForm">
+                <div class="form-group mb-3">
+                    <label for="loginEmail">Email :</label>
+                    <input type="email" class="form-control" id="loginEmail" required>
+                </div>
 
-                    <div class="form-group mb-3">
-                        <label for="loginPassword">Mot de passe :</label>
-                        <input type="password" class="form-control" id="loginPassword" required>
-                    </div>
+                <div class="form-group mb-3">
+                    <label for="loginPassword">Mot de passe :</label>
+                    <input type="password" class="form-control" id="loginPassword" required>
+                </div>
 
-                    <button type="button" class="btn btn-primary mb-3" onclick="login()">Se connecter</button>
-                </form>
+                <button type="button" class="btn btn-primary mb-3" onclick="login()">Se connecter</button>
+            </form>
+
+            <h2>Update</h2>
+            <form id="updateUserForm">
+                <div class="mb-3">
+                  <label for="userIdUpdate" class="form-label">ID de l'utilisateur à mettre à jour :</label>
+                  <input type="text" class="form-control" id="userIdUpdate" required>
+                </div>
+          
+                <div class="mb-3">
+                  <label for="lastNameUpdate" class="form-label">Nouveau nom :</label>
+                  <input type="text" class="form-control" id="lastNameUpdate" required>
+                </div>
+          
+                <div class="mb-3">
+                  <label for="firstNameUpdate" class="form-label">Nouveau prénom :</label>
+                  <input type="text" class="form-control" id="firstNameUpdate" required>
+                </div>
+          
+                <div class="mb-3">
+                  <label for="emailUpdate" class="form-label">Nouvel email :</label>
+                  <input type="email" class="form-control" id="emailUpdate" required>
+                </div>
+          
+                <div class="mb-3">
+                  <label for="passwordUpdate" class="form-label">Nouveau mot de passe :</label>
+                  <input type="password" class="form-control" id="passwordUpdate" required>
+                </div>
+          
+                <button type="button" class="btn btn-primary" onclick="updateUser()">Mettre à jour l'utilisateur</button>
+            </form>
 
             <h2 class="mb-3">Supprimer un utilisateur par ID</h2>
             <form id="deleteUserForm" class="mb-3">
@@ -270,6 +300,31 @@
             console.error('Erreur lors de la requête :', error);
             document.getElementById('resultContainer').innerText = 'Erreur lors de la requête.';
         }
+    }
+
+    async function updateUser() {
+      const userId = document.getElementById('userIdUpdate').value;
+      const lastName = document.getElementById('lastNameUpdate').value;
+      const firstName = document.getElementById('firstNameUpdate').value;
+      const email = document.getElementById('emailUpdate').value;
+      const password = document.getElementById('passwordUpdate').value;
+
+      try {
+        const response = await fetch(`http://localhost:3000/user/${userId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ last_name: lastName, first_name: firstName, email, password }),
+        });
+
+        const data = await response.json();
+
+        document.getElementById('resultContainer').innerText = JSON.stringify(data, null, 2);
+      } catch (error) {
+        console.error('Erreur lors de la requête :', error);
+        document.getElementById('resultContainer').innerText = 'Erreur lors de la requête.';
+      }
     }
     </script>
 </body>

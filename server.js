@@ -146,6 +146,34 @@ app.delete('/user/:id', (req, res) => {
 
 
 //Update User
+app.put('/user/:id', async (req, res) => {
+  const userId = req.params.id;
+  const { last_name, first_name, email, password } = req.body;
+
+  if (!last_name || !first_name || !email || !password) {
+    return res.status(400).json({ error: 'Tous les champs doivent être remplis' });
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const query = 'UPDATE user SET last_name = ?, first_name = ?, email = ?, password = ? WHERE id = ?';
+    
+    db.query(query, [last_name, first_name, email, hashedPassword, userId], (err, results) => {
+      if (err) {
+        console.error('Erreur lors de l\'exécution de la requête :', err);
+        return res.status(500).json({ error: 'Erreur de base de données' });
+      }
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé' });
+      }
+
+      res.status(200).json({ message: 'Utilisateur mis à jour avec succès' });
+    });
+  } catch (error) {
+    console.error('Erreur lors du hachage du mot de passe :', error);
+    res.status(500).json({ error: 'Erreur lors du traitement du mot de passe' });
+  }
+});
 
 //Post comment
 app.post('/comment', async (req, res) => {
