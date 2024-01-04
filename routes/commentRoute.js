@@ -11,4 +11,5 @@ router.get('/techno/:id', middleware.authenticator, commentController.getComment
 router.get('/user/:id', middleware.authenticator, commentController.getCommentByUserId); //Get techno by user id
 router.get('/date/:date', middleware.authenticator, commentController.getCommentAfterDate); //get techno after
 
+
 module.exports = router
