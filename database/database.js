@@ -6,6 +6,9 @@ const db = mysql.createConnection({
     user: 'root',
     password: '',
     database: 'node_ipssi',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
   });
 
 module.exports = db

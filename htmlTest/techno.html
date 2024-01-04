@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test routes API</title>
+    
+    <link rel="icon" href="ipssi.svg" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+         #resultContainer, .title-fixed {
+            position: fixed;
+         }
+    </style>
+</head>
+<body class="container mt-4">
+
+    <h1 class="mb-4">Tester les routes</h1>
+
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            
+            <h2 class="mb-3">Ajouter une technologie</h2>
+            <form id="addTechnoForm" class="mb-3">
+                <div class="form-group mb-3">
+                    <label for="technoName">Nom de la technologie :</label>
+                    <input type="text" class="form-control" id="technoName" required>
+                </div>
+
+
+                <button type="button" class="btn btn-success" onclick="addTechno()">Ajouter une technologie</button>
+            </form>
+
+            <h2 class="mb-3">Récupérer tous les détails d'une technologie</h2>
+            <form id="getTechnoDetailsForm" class="mb-3">
+                <div class="mb-3">
+                    <label for="technoIdForDetails" class="form-label">ID de la technologie :</label>
+                    <input type="text" class="form-control" id="technoIdForDetails" required>
+                </div>
+
+                <button type="button" class="btn btn-primary" onclick="getTechnoDetails()">Récupérer les détails</button>
+            </form>
+
+            <h2 class="mb-3">Mettre à jour une technologie</h2>
+            <form id="updateTechnoForm" class="mb-3">
+                <div class="mb-3">
+                    <label for="technoIdForUpdate" class="form-label">ID de la technologie à mettre à jour :</label>
+                    <input type="text" class="form-control" id="technoIdForUpdate" required>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="updatedTechnoName">Nouveau nom de la technologie :</label>
+                    <input type="text" class="form-control" id="updatedTechnoName" required>
+                </div>
+
+                <button type="button" class="btn btn-warning" onclick="updateTechno()">Mettre à jour la technologie</button>
+            </form>
+
+            <h2 class="mb-3">Supprimer une technologie</h2>
+            <form id="deleteTechnoForm" class="mb-3">
+                <div class="mb-3">
+                    <label for="technoIdForDelete" class="form-label">ID de la technologie à supprimer :</label>
+                    <input type="text" class="form-control" id="technoIdForDelete" required>
+                </div>
+
+                <button type="button" class="btn btn-danger" onclick="deleteTechno()">Supprimer la technologie</button>
+            </form>
+
+            <h2 class="mb-3">Récupérer toutes les technologies</h2>
+            <form id="getAllTechnosForm" class="mb-3">
+                <button type="button" class="btn btn-primary" onclick="getAllTechnos()">Récupérer toutes les technologies</button>
+            </form>
+
+        </div>
+
+        <div class="col-lg-6">
+            <h2 class="mb-3 title-fixed">Résultats</h2>
+            <pre id="resultContainer" class="mt-5"></pre>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+
+        async function addTechno() {
+            const technoName = document.getElementById('technoName').value;
+
+            try {
+                const response = await fetch('http://localhost:3000/techno/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `${token}`,
+                    },
+                    body: JSON.stringify({ techno_name: technoName }),
+                });
+
+                const data = await response.json();
+
+                document.getElementById('resultContainer').innerText = JSON.stringify(data, null, 2);
+            } catch (error) {
+                console.error('Erreur lors de la requête :', error);
+                document.getElementById('resultContainer').innerText = 'Erreur lors de la requête.';
+            }
+        }
+
+        async function getTechnoDetails() {
+            const technoId = document.getElementById('technoIdForDetails').value;
+
+            try {
+                const response = await fetch(`http://localhost:3000/techno/detail/${technoId}`, {
+                    headers: {
+                        Authorization: `${token}`,
+                    },
+                });
+
+                const data = await response.json();
+
+                document.getElementById('resultContainer').innerText = JSON.stringify(data, null, 2);
+            } catch (error) {
+                console.error('Erreur lors de la requête :', error);
+                document.getElementById('resultContainer').innerText = 'Erreur lors de la requête.';
+            }
+        }
+
+        async function updateTechno() {
+            const technoId = document.getElementById('technoIdForUpdate').value;
+            const updatedTechnoName = document.getElementById('updatedTechnoName').value;
+
+            try {
+                const response = await fetch(`http://localhost:3000/techno/update/${technoId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `${token}`,
+                    },
+                    body: JSON.stringify({ techno_name: updatedTechnoName }),
+                });
+
+                const data = await response.json();
+
+                document.getElementById('resultContainer').innerText = JSON.stringify(data, null, 2);
+            } catch (error) {
+                console.error('Erreur lors de la requête :', error);
+                document.getElementById('resultContainer').innerText = 'Erreur lors de la requête.';
+            }
+        }
+
+        async function deleteTechno() {
+            const technoId = document.getElementById('technoIdForDelete').value;
+
+            try {
+                const response = await fetch(`http://localhost:3000/techno/delete/${technoId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        Authorization: `${token}`,
+                    },
+                });
+
+                const data = await response.json();
+
+                document.getElementById('resultContainer').innerText = JSON.stringify(data, null, 2);
+            } catch (error) {
+                console.error('Erreur lors de la requête :', error);
+                document.getElementById('resultContainer').innerText = 'Erreur lors de la requête.';
+            }
+        }
+
+        async function getAllTechnos() {
+            try {
+                const response = await fetch('http://localhost:3000/techno/getAll', {
+                    headers: {
+                        Authorization: `${token}`,
+                    },
+                });                
+                const data = await response.json();
+
+                document.getElementById('resultContainer').innerText = JSON.stringify(data, null, 2);
+            } catch (error) {
+                console.error('Erreur lors de la requête :', error);
+                document.getElementById('resultContainer').innerText = 'Erreur lors de la requête.';
+            }
+        }
+    </script>
+</body>
+</html>
+
